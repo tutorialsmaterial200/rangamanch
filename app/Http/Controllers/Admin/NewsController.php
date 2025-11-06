@@ -316,24 +316,25 @@ class NewsController extends Controller
     public function uploadGalleryImage(Request $request)
     {
         try {
+            // Check if file exists before validation
+            if (!$request->hasFile('image')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No image file provided'
+                ], 400);
+            }
+
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
             ]);
 
-            if ($request->hasFile('image')) {
-                $imagePath = $this->handleFileUpload($request, 'image');
-                
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Image uploaded successfully!',
-                    'path' => $imagePath
-                ]);
-            }
-
+            $imagePath = $this->handleFileUpload($request, 'image');
+            
             return response()->json([
-                'success' => false,
-                'message' => 'No image file provided'
-            ], 400);
+                'success' => true,
+                'message' => 'Image uploaded successfully!',
+                'path' => $imagePath
+            ]);
         } catch (\Throwable $th) {
             Log::error('Gallery image upload error: ' . $th->getMessage(), ['exception' => $th]);
             

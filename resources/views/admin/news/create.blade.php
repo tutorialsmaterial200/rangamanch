@@ -225,20 +225,20 @@
                     <!-- Upload Button -->
                     <div class="mb-3 pb-3 border-bottom">
                         <button type="button" class="btn btn-success btn-sm" id="upload-new-image-btn" data-toggle="collapse" data-target="#upload-image-area">
-                            <i class="fas fa-plus"></i> {{ __('admin.Upload New Image') }}
+                            <i class="fas fa-plus"></i> {{ __('Upload New Image') }}
                         </button>
                     </div>
 
                     <!-- Upload Area (Collapsible) -->
                     <div class="collapse mb-3" id="upload-image-area">
                         <div class="card card-body bg-light">
-                            <h6 class="mb-3"><i class="fas fa-upload"></i> {{ __('admin.Upload Image to Gallery') }}</h6>
+                            <h6 class="mb-3"><i class="fas fa-upload"></i> {{ __('Upload Image to Gallery') }}</h6>
                             <form id="modal-image-upload-form" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group">
                                     <label for="modal-image-file" class="d-flex flex-column align-items-center justify-content-center p-3 border-2 border-dashed rounded cursor-pointer" style="min-height: 120px; background-color: #f8f9fa; transition: all 0.3s ease; border-color: #dee2e6;">
                                         <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: #6c757d;"></i>
-                                        <span class="text-muted text-center">{{ __('admin.Choose File') }} or drag & drop</span>
+                                        <span class="text-muted text-center">{{ __('Choose File') }} or drag & drop</span>
                                         <small class="text-secondary mt-1">PNG, JPG, GIF up to 10MB</small>
                                     </label>
                                     <input type="file" name="image" id="modal-image-file" accept="image/*" style="display: none;">
@@ -248,7 +248,7 @@
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary btn-sm" id="modal-upload-btn">
-                                        <i class="fas fa-upload"></i> {{ __('admin.Upload') }}
+                                        <i class="fas fa-upload"></i> {{ __('Image Upload') }}
                                     </button>
                                     <button type="button" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#upload-image-area">
                                         <i class="fas fa-times"></i> {{ __('admin.Cancel') }}
@@ -392,7 +392,20 @@
             modalImageUploadForm.on('submit', function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(this);
+                // Check if file is selected
+                if (!modalImageFile[0].files || modalImageFile[0].files.length === 0) {
+                    alert('Please select an image first');
+                    return;
+                }
+                
+                const formData = new FormData();
+                // Explicitly append the file
+                formData.append('image', modalImageFile[0].files[0]);
+                // Append CSRF token from the modal form
+                const csrfToken = modalImageUploadForm.find('input[name="_token"]').val();
+                if (csrfToken) {
+                    formData.append('_token', csrfToken);
+                }
                 
                 $.ajax({
                     type: 'POST',
@@ -412,11 +425,14 @@
                             
                             // Reload gallery
                             loadImageGallery();
+                        } else {
+                            alert(response.message || 'Error uploading image');
                         }
                     },
                     error: function(error) {
                         console.log(error);
-                        alert('{{ __("admin.Error uploading image") }}');
+                        const message = error.responseJSON?.message || 'Error uploading image';
+                        alert(message);
                     }
                 });
             });
