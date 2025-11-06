@@ -49,7 +49,7 @@
                         </div>
                         <div class="single-post-image">
                             <a href="{{ route('news-details', $singlePost->slug) }}">
-                                <img src="{{ asset($singlePost->image) }}" class=" img-fluid object-fit-fill border rounded" alt="{{ $singlePost->title }}">
+                                <img src="{{ asset($singlePost->image) }}" class=" img-fluid object-fit-cover border rounded" alt="{{ $singlePost->title }}">
                             </a>
                         </div>
                         <div class="single-post-excerpt">
