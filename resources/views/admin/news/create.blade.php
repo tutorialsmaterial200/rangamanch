@@ -40,15 +40,16 @@
 
 
                     <div class="form-group">
-                        <label for="">{{ __('admin.Image') }}</label>
+                        <label for="">{{ __('admin.Image') }} <span class="badge badge-info">Optional</span></label>
                         <div class="card">
                             <div class="card-body">
                                 <!-- Upload Area -->
                                 <div id="image-preview" class="image-preview mb-3" @if(isset($news) && $news->image) style="display: none;" @endif>
-                                    <label for="image-upload" id="image-label" class="d-flex flex-column align-items-center justify-content-center p-4 border-2 border-dashed rounded cursor-pointer" style="min-height: 200px; background-color: #f8f9fa; transition: all 0.3s ease;">
+                                    <label for="image-upload" id="image-label" class="d-flex flex-column align-items-center justify-content-center p-4 border-2 border-dashed rounded cursor-pointer" style="min-height: 200px; background-color: #f8f9fa; transition: all 0.3s ease; border-color: #dee2e6;">
                                         <i class="fas fa-cloud-upload-alt fa-3x mb-2" style="color: #6c757d;"></i>
-                                        <span class="text-muted">{{ __('admin.Choose File') }} or drag & drop</span>
+                                        <span class="text-muted font-weight-bold">{{ __('admin.Choose File') }} or drag & drop</span>
                                         <small class="text-secondary mt-2">PNG, JPG, GIF up to 10MB</small>
+                                        <small class="text-info mt-1"><i class="fas fa-info-circle"></i> Image is optional</small>
                                     </label>
                                     <input type="file" name="image" id="image-upload" accept="image/*" style="display: none;">
                                 </div>
@@ -79,7 +80,7 @@
                                 <!-- New Image Preview -->
                                 <div id="image-preview-container" style="display: none;" class="mb-3">
                                     <div class="alert alert-success mb-2">
-                                        <i class="fas fa-check-circle"></i> {{ __(' Image Selected') }}
+                                        <i class="fas fa-check-circle"></i> {{ __('Image Selected') }}
                                     </div>
                                     <img id="preview-img" src="" alt="Preview" class="img-fluid rounded" style="max-height: 300px;">
                                     <div class="mt-2">
@@ -93,9 +94,8 @@
                                 </div>
 
                                 <!-- Image Browser Button -->
-                                <div class="btn-group btn-block" role="group" @if(isset($news) && $news->image) style="display: none;" @endif>
-                                
-                                    <button type="button" class="btn btn-secondary" id="gallery-image-btn" style="flex: 1;">
+                                <div class="btn-group btn-block" role="group" @if(isset($news) && $news->image) style="display: none;" @endif style="gap: 10px;">
+                                    <button type="button" class="btn btn-info" id="gallery-image-btn" style="flex: 1;">
                                         <i class="fas fa-images"></i> {{ __('Image Gallery') }}
                                     </button>
                                 </div>
