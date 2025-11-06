@@ -419,6 +419,9 @@
                     data: formData,
                     contentType: false,
                     processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response) {
                         if (response.success) {
                             // Reset form
@@ -427,12 +430,18 @@
                             $('#upload-image-area').collapse('hide');
                             
                             // Show success message
-                            alert('{{ __("admin.Image uploaded successfully!") }}');
+                            Toast.fire({
+                                icon: 'success',
+                                title: '{{ __("admin.Image uploaded successfully!") }}'
+                            });
                             
                             // Reload gallery
                             loadImageGallery();
                         } else {
-                            alert(response.message || 'Error uploading image');
+                            Toast.fire({
+                                icon: 'error',
+                                title: response.message || 'Error uploading image'
+                            });
                         }
                     },
                     error: function(error) {
@@ -440,14 +449,29 @@
                         console.error('Response text:', error.responseText);
                         let message = 'Error uploading image';
                         
-                        if (error.responseJSON && error.responseJSON.message) {
+                        if (error.status === 400) {
+                            message = 'Bad Request - Check file format and size';
+                        } else if (error.status === 401) {
+                            message = 'Authentication failed - Please log in again';
+                        } else if (error.status === 403) {
+                            message = 'Permission denied';
+                        } else if (error.status === 413) {
+                            message = 'File too large';
+                        } else if (error.status === 422) {
+                            if (error.responseJSON && error.responseJSON.errors) {
+                                message = Object.values(error.responseJSON.errors).flat().join(', ');
+                            }
+                        } else if (error.responseJSON && error.responseJSON.message) {
                             message = error.responseJSON.message;
                         } else if (error.statusText) {
                             message = error.statusText;
                         }
                         
                         console.error('Error message:', message);
-                        alert(message);
+                        Toast.fire({
+                            icon: 'error',
+                            title: message
+                        });
                     }
                 });
             });
