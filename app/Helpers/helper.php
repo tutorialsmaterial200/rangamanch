@@ -80,9 +80,15 @@ function getSetting($key){
 /** check permission */
 
 function canAccess(array $permissions){
+   /** @var \App\Models\Admin|null $user */
+   $user = auth()->guard('admin')->user();
+   
+   if (!$user) {
+       return false;
+   }
 
-   $permission = auth()->guard('admin')->user()->hasAnyPermission($permissions);
-   $superAdmin = auth()->guard('admin')->user()->hasRole('Super Admin');
+   $permission = $user->hasAnyPermission($permissions);
+   $superAdmin = $user->hasRole('Super Admin');
 
    if($permission || $superAdmin){
     return true;
@@ -95,14 +101,28 @@ function canAccess(array $permissions){
 /** get admin role */
 
 function getRole(){
-    $role = auth()->guard('admin')->user()->getRoleNames();
+    /** @var \App\Models\Admin|null $user */
+    $user = auth()->guard('admin')->user();
+    
+    if (!$user) {
+        return null;
+    }
+    
+    $role = $user->getRoleNames();
     return $role->first();
 }
 
 /** check user permission */
 
 function checkPermission(string $permission){
-    return auth()->guard('admin')->user()->hasPermissionTo($permission);
+    /** @var \App\Models\Admin|null $user */
+    $user = auth()->guard('admin')->user();
+    
+    if (!$user) {
+        return false;
+    }
+    
+    return $user->hasPermissionTo($permission);
 }
 
 /** Convert English date to Nepali Bikram Sambat date */
