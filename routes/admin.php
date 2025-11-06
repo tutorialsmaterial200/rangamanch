@@ -64,6 +64,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
     Route::get('pending-news', [NewsController::class, 'pendingNews'])->name('pending.news');
     Route::put('approve-news', [NewsController::class, 'approveNews'])->name('approve.news');
     Route::get('gallery-images', [NewsController::class, 'galleryImages'])->name('gallery-images');
+    Route::post('upload-gallery-image', [NewsController::class, 'uploadGalleryImage'])->name('upload-gallery-image');
 
     Route::resource('news', NewsController::class);
 

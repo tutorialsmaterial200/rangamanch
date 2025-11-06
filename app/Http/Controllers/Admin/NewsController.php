@@ -309,4 +309,38 @@ class NewsController extends Controller
             'per_page' => $perPage
         ]);
     }
+
+    /**
+     * Upload image to gallery
+     */
+    public function uploadGalleryImage(Request $request)
+    {
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
+            ]);
+
+            if ($request->hasFile('image')) {
+                $imagePath = $this->handleFileUpload($request, 'image');
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Image uploaded successfully!',
+                    'path' => $imagePath
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No image file provided'
+            ], 400);
+        } catch (\Throwable $th) {
+            Log::error('Gallery image upload error: ' . $th->getMessage(), ['exception' => $th]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error uploading image: ' . $th->getMessage()
+            ], 500);
+        }
+    }
 }
