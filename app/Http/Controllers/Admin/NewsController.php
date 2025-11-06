@@ -85,7 +85,7 @@ class NewsController extends Controller
             if ($request->filled('gallery_image_path')) {
                 // Use the gallery image path
                 $imagePath = $request->gallery_image_path;
-            } else {
+            } elseif ($request->hasFile('image')) {
                 // Handle uploaded file
                 $imagePath = $this->handleFileUpload($request, 'image');
             }
@@ -94,7 +94,7 @@ class NewsController extends Controller
             $news->language = $request->language;
             $news->category_id = $request->category;
             $news->auther_id = Auth::guard('admin')->user()->id;
-            $news->image = $imagePath;
+            $news->image = $imagePath; // Can be null now
             $news->title = $request->title;
             $news->slug = Str::slug($request->title);
             $news->content = $request->content;
