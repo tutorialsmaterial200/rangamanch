@@ -1,0 +1,71 @@
+.card__post__title h2 {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 25px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-align: left;
+}
+
+.card__post__title h2 a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.card__post__title h2 a:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.bg__post-cover {
+    
+    padding: 30px;
+}
+
+.card__post__category {
+    display: inline-block;
+    background: #ff4b4b;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.card__post__author-info {
+    margin-top: 15px;
+}
+
+.card__post__author-info ul {
+    margin: 0;
+    padding: 0;
+}
+
+.card__post__author-info li {
+    color: #fff;
+    font-size: 14px;
+}
+
+.card__post__author-info li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .card__post__title h2 {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 576px) {
+    .card__post__title h2 {
+        font-size: 24px;
+    }
+    
+    .bg__post-cover {
+        padding: 20px;
+    }
+}
