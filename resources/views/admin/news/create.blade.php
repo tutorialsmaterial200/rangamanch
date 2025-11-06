@@ -398,14 +398,20 @@
                     return;
                 }
                 
+                const file = modalImageFile[0].files[0];
+                console.log('Modal upload - File selected:', file.name, file.size, file.type);
+                
                 const formData = new FormData();
                 // Explicitly append the file
-                formData.append('image', modalImageFile[0].files[0]);
+                formData.append('image', file);
                 // Append CSRF token from the modal form
                 const csrfToken = modalImageUploadForm.find('input[name="_token"]').val();
+                console.log('CSRF Token:', csrfToken ? 'Present' : 'Missing');
                 if (csrfToken) {
                     formData.append('_token', csrfToken);
                 }
+                
+                console.log('FormData entries:', Array.from(formData.entries()).map(e => e[0]));
                 
                 $.ajax({
                     type: 'POST',
@@ -430,8 +436,17 @@
                         }
                     },
                     error: function(error) {
-                        console.log(error);
-                        const message = error.responseJSON?.message || 'Error uploading image';
+                        console.error('Upload error:', error);
+                        console.error('Response text:', error.responseText);
+                        let message = 'Error uploading image';
+                        
+                        if (error.responseJSON && error.responseJSON.message) {
+                            message = error.responseJSON.message;
+                        } else if (error.statusText) {
+                            message = error.statusText;
+                        }
+                        
+                        console.error('Error message:', message);
                         alert(message);
                     }
                 });
