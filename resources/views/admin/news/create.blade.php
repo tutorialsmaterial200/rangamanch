@@ -40,16 +40,15 @@
 
 
                     <div class="form-group">
-                        <label for="">{{ __('admin.Image') }} <span class="badge badge-info">Optional</span></label>
+                        <label for="">{{ __('admin.Image') }}</label>
                         <div class="card">
                             <div class="card-body">
                                 <!-- Upload Area -->
                                 <div id="image-preview" class="image-preview mb-3" @if(isset($news) && $news->image) style="display: none;" @endif>
-                                    <label for="image-upload" id="image-label" class="d-flex flex-column align-items-center justify-content-center p-4 border-2 border-dashed rounded cursor-pointer" style="min-height: 200px; background-color: #f8f9fa; transition: all 0.3s ease; border-color: #dee2e6;">
+                                    <label for="image-upload" id="image-label" class="d-flex flex-column align-items-center justify-content-center p-4 border-2 border-dashed rounded cursor-pointer" style="min-height: 200px; background-color: #f8f9fa; transition: all 0.3s ease;">
                                         <i class="fas fa-cloud-upload-alt fa-3x mb-2" style="color: #6c757d;"></i>
-                                        <span class="text-muted font-weight-bold">{{ __('admin.Choose File') }} or drag & drop</span>
+                                        <span class="text-muted">{{ __('admin.Choose File') }} or drag & drop</span>
                                         <small class="text-secondary mt-2">PNG, JPG, GIF up to 10MB</small>
-                                        <small class="text-info mt-1"><i class="fas fa-info-circle"></i> Image is optional</small>
                                     </label>
                                     <input type="file" name="image" id="image-upload" accept="image/*" style="display: none;">
                                 </div>
@@ -80,7 +79,7 @@
                                 <!-- New Image Preview -->
                                 <div id="image-preview-container" style="display: none;" class="mb-3">
                                     <div class="alert alert-success mb-2">
-                                        <i class="fas fa-check-circle"></i> {{ __('Image Selected') }}
+                                        <i class="fas fa-check-circle"></i> {{ __(' Image Selected') }}
                                     </div>
                                     <img id="preview-img" src="" alt="Preview" class="img-fluid rounded" style="max-height: 300px;">
                                     <div class="mt-2">
@@ -94,8 +93,9 @@
                                 </div>
 
                                 <!-- Image Browser Button -->
-                                <div class="btn-group btn-block" role="group" @if(isset($news) && $news->image) style="display: none;" @endif style="gap: 10px;">
-                                    <button type="button" class="btn btn-info" id="gallery-image-btn" style="flex: 1;">
+                                <div class="btn-group btn-block" role="group" @if(isset($news) && $news->image) style="display: none;" @endif>
+                                
+                                    <button type="button" class="btn btn-secondary" id="gallery-image-btn" style="flex: 1;">
                                         <i class="fas fa-images"></i> {{ __('Image Gallery') }}
                                     </button>
                                 </div>
@@ -222,6 +222,41 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-success btn-sm" id="upload-new-image-btn" data-toggle="collapse" data-target="#upload-image-area">
+                            <i class="fas fa-plus"></i> {{ __('Upload New Image') }}
+                        </button>
+                    </div>
+
+                    <!-- Upload Area in Modal -->
+                    <div class="collapse mb-3" id="upload-image-area">
+                        <div class="card card-body bg-light">
+                            <h6 class="mb-3"><i class="fas fa-upload"></i> Upload Image to Gallery</h6>
+                            <form id="modal-image-upload-form" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="modal-image-file" class="d-flex flex-column align-items-center justify-content-center p-3 border-2 border-dashed rounded cursor-pointer" style="min-height: 150px; background-color: #f8f9fa; transition: all 0.3s ease; border-color: #dee2e6;">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: #6c757d;"></i>
+                                        <span class="text-muted">{{ __('admin.Choose File') }} or drag & drop</span>
+                                        <small class="text-secondary mt-2">PNG, JPG, GIF up to 10MB</small>
+                                    </label>
+                                    <input type="file" name="image" id="modal-image-file" accept="image/*" style="display: none;">
+                                </div>
+                                <div id="modal-upload-preview" style="display: none;" class="mb-3">
+                                    <img id="modal-preview-img" src="" alt="Preview" class="img-fluid rounded" style="max-height: 150px;">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-sm" id="modal-upload-btn">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#upload-image-area">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <div id="gallery-loading" class="text-center">
                         <div class="spinner-border" role="status">
                             <span class="sr-only">Loading...</span>
@@ -278,6 +313,105 @@
             galleryImageBtn.on('click', function() {
                 loadImageGallery();
                 $('#galleryModal').modal('show');
+            });
+
+            // Modal Image Upload
+            const modalImageFile = $('#modal-image-file');
+            const modalImageLabel = $('label[for="modal-image-file"]');
+            const modalUploadPreview = $('#modal-upload-preview');
+            const modalPreviewImg = $('#modal-preview-img');
+
+            // Modal file input change
+            modalImageFile.on('change', function(e) {
+                handleModalImagePreview(e);
+            });
+
+            // Modal drag & drop
+            modalImageLabel.on('dragover', function(e) {
+                e.preventDefault();
+                $(this).css({
+                    'background-color': '#e9ecef',
+                    'border-color': '#0066cc'
+                });
+            });
+
+            modalImageLabel.on('dragleave', function() {
+                $(this).css({
+                    'background-color': '#f8f9fa',
+                    'border-color': '#dee2e6'
+                });
+            });
+
+            modalImageLabel.on('drop', function(e) {
+                e.preventDefault();
+                $(this).css({
+                    'background-color': '#f8f9fa',
+                    'border-color': '#dee2e6'
+                });
+                
+                const files = e.originalEvent.dataTransfer.files;
+                modalImageFile[0].files = files;
+                handleModalImagePreview({ target: modalImageFile[0] });
+            });
+
+            // Handle modal image preview
+            function handleModalImagePreview(e) {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        alert('Please select an image file');
+                        return;
+                    }
+
+                    // Validate file size (10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('Image size should be less than 10MB');
+                        return;
+                    }
+
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        modalPreviewImg.attr('src', event.target.result);
+                        modalUploadPreview.show();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Modal image upload form submit
+            $('#modal-image-upload-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin.upload-gallery-image') }}",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Reset form
+                            $('#modal-image-upload-form')[0].reset();
+                            modalUploadPreview.hide();
+                            $('#upload-image-area').collapse('hide');
+                            
+                            // Show success message
+                            alert(response.message || 'Image uploaded successfully!');
+                            
+                            // Reload gallery
+                            loadImageGallery();
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        alert('Error uploading image. Please try again.');
+                    }
+                });
             });
 
             // Load Image Gallery
