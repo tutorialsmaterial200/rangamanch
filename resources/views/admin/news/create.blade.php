@@ -222,52 +222,58 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
+                    <!-- Upload Button -->
+                    <div class="mb-3 pb-3 border-bottom">
                         <button type="button" class="btn btn-success btn-sm" id="upload-new-image-btn" data-toggle="collapse" data-target="#upload-image-area">
-                            <i class="fas fa-plus"></i> {{ __('Upload New Image') }}
+                            <i class="fas fa-plus"></i> {{ __('admin.Upload New Image') }}
                         </button>
                     </div>
 
-                    <!-- Upload Area in Modal -->
+                    <!-- Upload Area (Collapsible) -->
                     <div class="collapse mb-3" id="upload-image-area">
                         <div class="card card-body bg-light">
-                            <h6 class="mb-3"><i class="fas fa-upload"></i> Upload Image to Gallery</h6>
+                            <h6 class="mb-3"><i class="fas fa-upload"></i> {{ __('admin.Upload Image to Gallery') }}</h6>
                             <form id="modal-image-upload-form" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group">
-                                    <label for="modal-image-file" class="d-flex flex-column align-items-center justify-content-center p-3 border-2 border-dashed rounded cursor-pointer" style="min-height: 150px; background-color: #f8f9fa; transition: all 0.3s ease; border-color: #dee2e6;">
+                                    <label for="modal-image-file" class="d-flex flex-column align-items-center justify-content-center p-3 border-2 border-dashed rounded cursor-pointer" style="min-height: 120px; background-color: #f8f9fa; transition: all 0.3s ease; border-color: #dee2e6;">
                                         <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: #6c757d;"></i>
-                                        <span class="text-muted">{{ __('admin.Choose File') }} or drag & drop</span>
-                                        <small class="text-secondary mt-2">PNG, JPG, GIF up to 10MB</small>
+                                        <span class="text-muted text-center">{{ __('admin.Choose File') }} or drag & drop</span>
+                                        <small class="text-secondary mt-1">PNG, JPG, GIF up to 10MB</small>
                                     </label>
                                     <input type="file" name="image" id="modal-image-file" accept="image/*" style="display: none;">
                                 </div>
-                                <div id="modal-upload-preview" style="display: none;" class="mb-3">
-                                    <img id="modal-preview-img" src="" alt="Preview" class="img-fluid rounded" style="max-height: 150px;">
+                                <div id="modal-upload-preview" style="display: none;" class="mb-3 text-center">
+                                    <img id="modal-preview-img" src="" alt="Preview" class="img-fluid rounded" style="max-height: 120px;">
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary btn-sm" id="modal-upload-btn">
-                                        <i class="fas fa-upload"></i> Upload
+                                        <i class="fas fa-upload"></i> {{ __('admin.Upload') }}
                                     </button>
                                     <button type="button" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#upload-image-area">
-                                        <i class="fas fa-times"></i> Cancel
+                                        <i class="fas fa-times"></i> {{ __('admin.Cancel') }}
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
+                    <!-- Gallery Loading -->
                     <div id="gallery-loading" class="text-center">
                         <div class="spinner-border" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
                         <p class="mt-2">{{ __('admin.Loading') }}</p>
                     </div>
+
+                    <!-- Gallery Container -->
                     <div id="gallery-container" style="display: none;">
                         <div class="row" id="gallery-images">
                             <!-- Gallery images will be loaded here -->
                         </div>
                     </div>
+
+                    <!-- Empty State -->
                     <div id="gallery-empty" style="display: none;" class="text-center py-5">
                         <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                         <p class="text-muted">{{ __('admin.No Images Available') }}</p>
@@ -315,11 +321,12 @@
                 $('#galleryModal').modal('show');
             });
 
-            // Modal Image Upload
+            // Modal Image Upload Functionality
             const modalImageFile = $('#modal-image-file');
             const modalImageLabel = $('label[for="modal-image-file"]');
             const modalUploadPreview = $('#modal-upload-preview');
             const modalPreviewImg = $('#modal-preview-img');
+            const modalImageUploadForm = $('#modal-image-upload-form');
 
             // Modal file input change
             modalImageFile.on('change', function(e) {
@@ -382,7 +389,7 @@
             }
 
             // Modal image upload form submit
-            $('#modal-image-upload-form').on('submit', function(e) {
+            modalImageUploadForm.on('submit', function(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(this);
@@ -396,12 +403,12 @@
                     success: function(response) {
                         if (response.success) {
                             // Reset form
-                            $('#modal-image-upload-form')[0].reset();
+                            modalImageUploadForm[0].reset();
                             modalUploadPreview.hide();
                             $('#upload-image-area').collapse('hide');
                             
                             // Show success message
-                            alert(response.message || 'Image uploaded successfully!');
+                            alert('{{ __("admin.Image uploaded successfully!") }}');
                             
                             // Reload gallery
                             loadImageGallery();
@@ -409,7 +416,7 @@
                     },
                     error: function(error) {
                         console.log(error);
-                        alert('Error uploading image. Please try again.');
+                        alert('{{ __("admin.Error uploading image") }}');
                     }
                 });
             });
